@@ -7,9 +7,8 @@ class Board
 {
 private:
     int board[size][size];
-    int lost = 0;
+    int lost = 2;
 
-public:
     void init()
     {
         memset(board, 0, sizeof(board));
@@ -32,7 +31,7 @@ public:
              << "0 for up," << endl
              << "1 for right" << endl
              << "2 for down" << endl
-             << "3 for left"<<endl;
+             << "3 for left" << endl;
     }
 
     bool isGameOver()
@@ -44,6 +43,7 @@ public:
             {
                 if (board[i][j] == 2048)
                 {
+                    lost == 0;
                     return true;
                 }
                 if (board[i][j] == 0)
@@ -60,59 +60,21 @@ public:
         return false;
     }
 
-    void setColumn(bool up)
+    void move_up()
     {
-        if (up)
+        for (int i = 0; i < 4; i++)
         {
-            for (int j = 0; j < size; j++)
+            for (int j = 0; j < 4; j++)
             {
-                for (int i = 0; i < size - 1; i++)
+                if (!board[j][i])
                 {
-                    if (board[i][j] == board[i + 1][j] && board[i][j] != 0)
+                    for (int k = j + 1; k < 4; k++)
                     {
-                        board[i][j] += board[i + 1][j];
-                        board[i + 1][j] = 0;
-                    }
-                    else if (board[i][j] == 0)
-                    {
-                        int temp = i;
-                        while (i < size && board[i][j] == 0)
+                        if (board[k][i])
                         {
-                            i++;
-                        }
-                        if (i < size)
-                        {
-                            int num = board[i][j];
-                            board[i][j] = 0;
-                            board[temp][j] = num;
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            for (int j = 0; j < size; j++)
-            {
-                for (int i = size - 1; i > 0; i--)
-                {
-                    if (board[i][j] == board[i - 1][j] && board[i][j] != 0)
-                    {
-                        board[i][j] += board[i + 1][j];
-                        board[i - 1][j] = 0;
-                    }
-                    else if (board[i][j] == 0)
-                    {
-                        int temp = i;
-                        while (i >= 0 && board[i][j] == 0)
-                        {
-                            i--;
-                        }
-                        if (i >= 0)
-                        {
-                            int num = board[i][j];
-                            board[i][j] = 0;
-                            board[temp][j] = num;
+                            board[j][i] = board[k][i];
+                            board[k][i] = 0;
+                            break;
                         }
                     }
                 }
@@ -120,61 +82,127 @@ public:
         }
     }
 
-    void setRow(bool left)
+    void move_down()
     {
-        if (left)
+        for (int i = 0; i < 4; i++)
         {
-            for (int j = 0; j < size; j++)
+            for (int j = 3; j >= 0; j--)
             {
-                for (int i = 0; i < size - 1; i++)
+                if (!board[j][i])
                 {
-                    if (board[j][i] == board[j][i + 1] && board[j][i] != 0)
+                    for (int k = j - 1; k >= 0; k--)
                     {
-                        board[j][i] += board[j][i + 1];
-                        board[j][i + 1] = 0;
-                    }
-                    else if (board[j][i] == 0)
-                    {
-                        int temp = i;
-                        while (i < size && board[j][i] == 0)
+                        if (board[k][i])
                         {
-                            i++;
-                        }
-                        if (i < size)
-                        {
-                            int num = board[j][i];
-                            board[j][i] = 0;
-                            board[j][temp] = num;
+                            board[j][i] = board[k][i];
+                            board[k][i] = 0;
+                            break;
                         }
                     }
                 }
             }
         }
-        else
+    }
+
+    void move_left()
+    {
+        for (int i = 0; i < 4; i++)
         {
-            for (int j = 0; j < size; j++)
+            for (int j = 0; j < 4; j++)
             {
-                for (int i = size - 1; i > 0; i--)
+                if (!board[i][j])
                 {
-                    if (board[j][i] == board[j][i - 1] && board[j][i] != 0)
+                    for (int k = j + 1; k < 4; k++)
                     {
-                        board[j][i] += board[j][i - 1];
-                        board[j][i - 1] = 0;
-                    }
-                    else if (board[j][i] == 0)
-                    {
-                        int temp = i;
-                        while (i >= 0 && board[j][i] == 0)
+                        if (board[i][k])
                         {
-                            i--;
-                        }
-                        if (i >= 0)
-                        {
-                            int num = board[j][i];
-                            board[j][i] = 0;
-                            board[j][temp] = num;
+                            board[i][j] = board[i][k];
+                            board[i][k] = 0;
+                            break;
                         }
                     }
+                }
+            }
+        }
+    }
+
+    void move_right()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 3; j >= 0; j--)
+            {
+                if (!board[i][j])
+                {
+                    for (int k = j - 1; k >= 0; k--)
+                    {
+                        if (board[i][k])
+                        {
+                            board[i][j] = board[i][k];
+                            board[i][k] = 0;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void sum_up()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (board[j][i] && board[j][i] == board[j + 1][i])
+                {
+                    board[j][i] = board[j][i] + board[j + 1][i];
+                    board[j + 1][i] = 0;
+                }
+            }
+        }
+    }
+
+    void sum_down()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 3; j > 0; j--)
+            {
+                if (board[j][i] && board[j][i] == board[j - 1][i])
+                {
+                    board[j][i] = board[j][i] + board[j - 1][i];
+                    board[j - 1][i] = 0;
+                }
+            }
+        }
+    }
+
+    void sum_left()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (board[i][j] && board[i][j] == board[i][j + 1])
+                {
+                    board[i][j] = board[i][j] + board[i][j + 1];
+                    board[i][j + 1] = 0;
+                }
+            }
+        }
+    }
+
+    void sum_right()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 3; j > 0; j--)
+            {
+                if (board[i][j] && board[i][j] == board[i][j - 1])
+                {
+                    board[i][j] = board[i][j] + board[i][j - 1];
+                    board[i][j - 1] = 0;
                 }
             }
         }
@@ -204,6 +232,7 @@ public:
         }
     }
 
+public:
     void startGame()
     {
         showInstructions();
@@ -228,20 +257,28 @@ public:
             }
             if (direc == 0)
             {
-                setColumn(1);
+                move_up();
+                sum_up();
+                move_up();
             }
             else if (direc == 1)
             {
                 // cout<<"fine";
-                setRow(false);
+                move_right();
+                sum_right();
+                move_right();
             }
             else if (direc == 2)
             {
-                setColumn(0);
+                move_down();
+                sum_down();
+                move_down();
             }
             else
             {
-                setRow(1);
+                move_left();
+                sum_left();
+                move_left();
             }
             generateRandomNum();
         }
@@ -249,7 +286,7 @@ public:
         {
             cout << "You loose the game";
         }
-        else
+        else if (lost == 0)
         {
             cout << "Hurray,congratulations";
         }
